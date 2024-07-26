@@ -1,0 +1,18 @@
+
+
+COMMANDS :
+git clone https://github.com/MohammadHassanImran/pacman.git
+git status 
+git add testfile.txt 
+git add -A   // push all
+git commit -m "testing git command"
+git push origin main
+
+git remote set-url origin https://<token>@github.com/<usename>/<repo>
+
+git remote set-url origin https://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@github.com/MohammadHassanImran/pacman
+
+Tetris Access Token:
+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
+
+git remote set-url origin https://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@github.com/hassanimran-git/Tetris-Game-Cpp-Sfml
