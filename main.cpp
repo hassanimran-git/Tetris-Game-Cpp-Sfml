@@ -24,20 +24,21 @@ using namespace sf;
 
 
 int main(){
+
     srand(time(0));
     RenderWindow window(VideoMode(320, 480), title);
-
-    Texture obj1, obj2, obj3, obj4; ///obj 4 is GameOver image
+    Texture obj1, obj2, obj3, obj4;
     
-    // Load "frames.png","tiles.png" and "background.png" for Texture objects
+    // Load image for Textures
     obj1.loadFromFile("img/tiles.png");
     obj2.loadFromFile("img/background.png");
     obj3.loadFromFile("img/frame.png"); 
-
     obj4.loadFromFile("img/GameOver.png"); 
 
+    // Sprites Creation with textures
     Sprite sprite(obj1), background(obj2), frame(obj3), GameOver(obj4);
 
+    
     int delta_x=0, colorNum=1,TotalLines=0;
     float timer=0, delay=0.3;
     bool rotate=0, drop=0, pause=0;

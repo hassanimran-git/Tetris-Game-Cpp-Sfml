@@ -1,12 +1,3 @@
-/* PROGRAMMING FUNDAMENTAL'S PROJECT FOR FALL 2022 BS(CS)
- * You need to define the required function in the part instructed here below.
- * Avoid making any unnecessary changes, particularly the ones you don't understand.
- * The different pieces should be defined using an array - uncomment the following code once you are done creating the array.
- * TIP: Understand thoroughly before getting started with coding.
- * */
-
-//---Piece Starts to Fall When Game Starts---//
-
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -31,7 +22,6 @@ void fallingPiece(float &timer, float &delay, int &colorNum)
             colorNum = 1 + rand() % 7; // generate random b/w 1-7***
             int n = rand() % 7;
 
-            //--- Un-Comment this Part When You Make BLOCKS array---//
 
             for (int i = 0; i < 4; i++)
             {
