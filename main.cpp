@@ -10,12 +10,15 @@ using namespace std;
 
 using namespace sf;
 
-enum GameState {
+enum GameState
+{
     Playing,
-    Paused
+    Paused,
+    Over
 };
 
-int main() {
+int main()
+{
 
     srand(time(0));
     RenderWindow window(VideoMode(320, 480), title);
@@ -28,8 +31,9 @@ int main() {
     obj4.loadFromFile("img/GameOver.png");
 
     // Sprites Creation with textures
-    Sprite sprite(obj1), background(obj2), frame(obj3), GameOver(obj4);
+    Sprite tiles(obj1), background(obj2), frame(obj3), GameOver(obj4);
 
+    // vars
     int delta_x = 0, colorNum = 1, TotalLines = 0;
     float timer = 0, delay = 0.3;
     bool rotate = 0, drop = 0;
@@ -39,18 +43,23 @@ int main() {
     Clock clock;
     GameState gameState = Playing;
 
-    while (window.isOpen()) {
+    // Game Loop
+    while (window.isOpen())
+    {
+
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
         timer += time;
 
-        //---Event Listening Part---//
         Event e;
-        while (window.pollEvent(e)) {
+        while (window.pollEvent(e))
+        {
             if (e.type == Event::Closed)
                 window.close();
-            if (e.type == Event::KeyPressed) {
-                if (gameState == Playing) {
+            if (e.type == Event::KeyPressed)
+            {
+                if (gameState == Playing)
+                {
                     if (e.key.code == Keyboard::Up)
                         rotate = true;
                     else if (e.key.code == Keyboard::Left)
@@ -61,27 +70,33 @@ int main() {
                         drop = 1;
                     else if (e.key.code == Keyboard::H)
                         gameState = Paused; // Switch to paused state
-                } else if (gameState == Paused) {
+                }
+                else if (gameState == Paused)
+                {
                     if (e.key.code == Keyboard::H)
                         gameState = Playing; // Switch back to playing state
                 }
             }
         }
 
-        if (gameState == Playing) {
-            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+        if (gameState == Playing)
+        {
+
+            if (Keyboard::isKeyPressed(Keyboard::Down))
+            {
                 delay = 0.05;
-                if (TotalLines > 5) {
+                if (TotalLines > 5)
+                {
                     delay = 0.025;
                 }
             }
 
-            // Call your functions here
-            if (gameOver(N)) {
-                cout << "\n____________________\n\nGame over!\n____________________\n";
-                cout << "____________________\n\nYour Score was : " << TotalLines * 10 << "\n____________________\n";
-                checkHighscore(TotalLines);
-                break;
+            ////////////////////////////////////////
+
+            if (gameOver(N))
+            {
+                gameState = Over;
+                continue;
             }
 
             immediateDrop(drop);
@@ -90,7 +105,8 @@ int main() {
             rotationofblock(rotate);
             lineClear(M, N, TotalLines);
 
-            if (TotalLines == 5 && lvl2 == 0) {
+            if (TotalLines == 5 && lvl2 == 0)
+            {
                 cout << "\n5 lines Cleared!\n_________\nLevel 2!\n_________\n";
                 lvl2++;
             }
@@ -100,29 +116,47 @@ int main() {
             // Drawing code for playing state
             window.clear(Color::Black);
             window.draw(background);
-            for (int i = 0; i < M; i++) {
-                for (int j = 0; j < N; j++) {
+
+
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
                     if (gameGrid[i][j] == 0)
                         continue;
-                    sprite.setTextureRect(IntRect(gameGrid[i][j] * 18, 0, 18, 18));
-                    sprite.setPosition(j * 18, i * 18);
-                    sprite.move(28, 31); // Offset
-                    window.draw(sprite);
+                    tiles.setTextureRect(IntRect(gameGrid[i][j] * 18, 0, 18, 18));
+                    tiles.setPosition(j * 18, i * 18);
+                    tiles.move(28, 31); // Offset
+                    window.draw(tiles);
                 }
             }
-            for (int i = 0; i < 4; i++) {
-                sprite.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
-                sprite.setPosition(point_1[i][0] * 18, point_1[i][1] * 18);
-                sprite.move(28, 31);
-                window.draw(sprite);
+            for (int i = 0; i < 4; i++)
+            {
+                tiles.setTextureRect(IntRect(colorNum * 18, 0, 18, 18));
+                tiles.setPosition(point_1[i][0] * 18, point_1[i][1] * 18);
+                tiles.move(28, 31);
+                window.draw(tiles);
             }
             window.draw(frame);
-        } else if (gameState == Paused) {
+        }
+        else if (gameState == Paused)
+        {
             // Drawing code for paused state
             window.clear(Color::Black);
+        }
+        else if (gameState == Over)
+        {
+            // cout << "____________________\n\nYour Score was : " << TotalLines * 10 << "\n____________________\n";
+            // checkHighscore(TotalLines);
+            window.clear(Color::White);
+            GameOver.setScale(0.2,0.2);
+            GameOver.setPosition(20, 10);
+            window.draw(GameOver);
+
         }
 
         window.display();
     }
+
     return 0;
 }
