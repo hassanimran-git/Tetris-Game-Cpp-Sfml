@@ -86,6 +86,8 @@ int main()
     playerNameText.setFillColor(Color::Black);
     playerNameText.setPosition(50, 300);
 
+    Text RunningScore("", font, 20);
+
     // vars
     int delta_x = 0, colorNum = 1, TotalLines = 0;
     float timer = 0, delay = 0.3;
@@ -152,7 +154,7 @@ int main()
                     if (e.key.code == Keyboard::Escape)
                         gameState = Menu;
                 }
-                if (gameState == Playing)
+                else if (gameState == Playing)
                 {
                     if (e.key.code == Keyboard::Up)
                         rotate = true;
@@ -162,15 +164,17 @@ int main()
                         delta_x = 1;
                     else if (e.key.code == Keyboard::Space)
                         drop = 1;
-                    else if (e.key.code == Keyboard::H)
+                    else if (e.key.code == Keyboard::P)
                         gameState = Paused; // Switch to paused state
                 }
-                if (gameState == Paused)
+                else if (gameState == Paused)
                 {
-                    if (e.key.code == Keyboard::H)
+                    if (e.key.code == Keyboard::P)
+                    {
                         gameState = Playing; // Switch back to playing state
+                    }
                 }
-                if (gameState == Over)
+                else if (gameState == Over)
                 {
                     if (e.key.code == Keyboard::Escape)
                     {
@@ -237,7 +241,6 @@ int main()
             movement(delta_x);
             rotationofblock(rotate);
             lineClear(M, N, TotalLines);
-
             resetVars(delay, delta_x, TotalLines);
 
             // Drawing code for playing state
@@ -264,12 +267,79 @@ int main()
                 window.draw(tiles);
             }
             window.draw(frame);
-            window.draw(ScoreOutput);
+
+            // write score
+            RunningScore.setFillColor(Color::Yellow);
+            RunningScore.setCharacterSize(30);
+            RunningScore.setString("SCORE : " + to_string(TotalLines * 10));
+            RunningScore.setPosition(50, 420);
+            window.draw(RunningScore);
+
+            // Text Instuctions("INSTRUCTIONS :\n\nLEFT:\n  move left\n\nRIGHT:\n  move right\n\nUP:\n  rotate\n\nDOWN:\n  speedup\n\nSPACEBAR:\n  drop\n\nP:\n  pause\n\n", font, 12);
+            // Create a Text object for instructions
+            Text instructions("", font, 12);
+
+            float positionY = 100;
+            instructions.setString("INSTRUCTIONS :\n\n");
+            instructions.setFillColor(Color::Yellow);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Second line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("LEFT:\n  move left\n\n");
+            instructions.setFillColor(Color::Red);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Third line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("RIGHT:\n  move right\n\n");
+            instructions.setFillColor(Color::Green);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Fourth line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("UP:\n  rotate\n\n");
+            instructions.setFillColor(Color::Magenta);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Fifth line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("DOWN:\n  speedup\n\n");
+            instructions.setFillColor(Color::Yellow);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Sixth line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("SPACEBAR:\n  drop\n\n");
+            instructions.setFillColor(Color::Cyan);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
+
+            // Seventh line
+            positionY += instructions.getCharacterSize() * 2.5;
+            instructions.setString("P:\n  pause\n\n");
+            instructions.setFillColor(Color::Blue);
+            instructions.setPosition(230, positionY);
+            window.draw(instructions);
         }
+
         else if (gameState == Paused)
         {
             // Drawing code for paused state
             window.clear(Color::Black);
+            Text paused("PAUSED", font, 30);
+            paused.setPosition(100, 200);
+            paused.setFillColor(Color::White);
+            window.draw(paused);
+            paused.setCharacterSize(15);
+            paused.setString("press [p] to resume!");
+            paused.setPosition(80, 280);
+            window.draw(paused);
         }
         else if (gameState == Over)
         {
