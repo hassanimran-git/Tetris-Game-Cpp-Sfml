@@ -136,7 +136,7 @@ bool gameOver(int N)
 {
     for (int i = 0; i < N; i++)
     {
-        if (gameGrid[0][i] != 0)
+        if (gameGrid[2][i] != 0)
         {
             return true;
         }
@@ -144,21 +144,14 @@ bool gameOver(int N)
     return false;
 }
 
-void checkHighscore(int &TotalLines)
+bool checkHighscore(int &TotalLines)
 {
     int highestScore = 0;
     std::ifstream input("highestscore.txt"); // file opened for reading
     input >> highestScore;                   // taking input from the file into variable
-    if (highestScore < (TotalLines * 10))
-    {
-        std::ofstream output("highestscore.txt"); // file opened for writing
-        output << (TotalLines * 10);              // writing new highscore back to file
-        cout << "Congragulations!You Have Set a New Highscore!\n";
-        string name = " ";
-        cout << "Enter Your Username to Save your Score :";
-        cin >> name;
-        output << "   " << name; // writing name to file
-    }
+    if (highestScore <= (TotalLines * 10))
+        return true;
+    return false;
 }
 
 void rotationofblock(bool &rotate)
