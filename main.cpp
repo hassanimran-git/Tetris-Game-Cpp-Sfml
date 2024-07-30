@@ -69,7 +69,7 @@ int main()
     exitText.setPosition(50, 250 + 70);
     exitText.setFillColor(Color::White);
 
-    Text PlayerHighScoreText("", font, 40);
+    Text PlayerHighScoreText("", font, 30);
     PlayerHighScoreText.setPosition(50, 200);
     PlayerHighScoreText.setFillColor(Color::White);
 
@@ -77,13 +77,23 @@ int main()
     backText.setPosition(80, 400);
     backText.setFillColor(Color::White);
 
+    Text backToMenu("[esc] MENU", font, 20);
+
     Text ScoreOutput("", font, 20);
-    Text HighscoreOutput("New HighScore!\nEnter Your Name : \n", font, 20);
+    Text HighscoreOutput("", font, 20);
+
+    Text playerNameText("", font, 40);
+    playerNameText.setFillColor(Color::Black);
+    playerNameText.setPosition(50, 300);
 
     // vars
     int delta_x = 0, colorNum = 1, TotalLines = 0;
     float timer = 0, delay = 0.3;
     bool rotate = 0, drop = 0;
+
+    string playerName = "";
+    string score = to_string(TotalLines * 10);
+    bool typing = false, typingDone = false;
 
     Clock clock;
     GameState gameState = Menu;
@@ -100,6 +110,7 @@ int main()
         {
             if (e.type == Event::Closed)
                 window.close();
+
             if (e.type == Event::KeyPressed)
             {
                 if (gameState == Menu)
@@ -107,14 +118,28 @@ int main()
                     if (e.key.code == Keyboard::Num1)
                     {
 
-                        // delta_x = 0;
-                        // colorNum = 1;
-                        // TotalLines = 0;
-                        // timer = 0;
-                        // delay = 0.3;
-                        // rotate = 0;
-                        // drop = 0;
-                        // window.clear(Color::Black);
+                        delta_x = 0;
+                        colorNum = 1;
+                        TotalLines = 0;
+                        timer = 0;
+                        delay = 0.3;
+                        rotate = 0;
+                        drop = 0;
+                        playerName = "";
+                        score = to_string(TotalLines * 10);
+                        typing = false;
+                        typingDone = false;
+
+                        for (int i = 0; i < M; i++)
+                        {
+                            for (int j = 0; j < N; j++)
+                            {
+
+                                gameGrid[i][j] = 0;
+                            }
+                        }
+
+                        window.clear(Color::Black);
                         gameState = Playing;
                     }
                     else if (e.key.code == Keyboard::Num2)
@@ -122,12 +147,12 @@ int main()
                     else if (e.key.code == Keyboard::Num3)
                         window.close();
                 }
-                else if (gameState == HighScore)
+                if (gameState == HighScore)
                 {
                     if (e.key.code == Keyboard::Escape)
                         gameState = Menu;
                 }
-                else if (gameState == Playing)
+                if (gameState == Playing)
                 {
                     if (e.key.code == Keyboard::Up)
                         rotate = true;
@@ -140,15 +165,39 @@ int main()
                     else if (e.key.code == Keyboard::H)
                         gameState = Paused; // Switch to paused state
                 }
-                else if (gameState == Paused)
+                if (gameState == Paused)
                 {
                     if (e.key.code == Keyboard::H)
                         gameState = Playing; // Switch back to playing state
                 }
-                else if (gameState == Over)
+                if (gameState == Over)
                 {
                     if (e.key.code == Keyboard::Escape)
+                    {
+                        typing = false;
                         gameState = Menu;
+                    }
+                }
+            }
+            if (gameState == Over && e.type == Event::TextEntered && typing)
+            {
+                if (e.text.unicode == '\b' && !playerName.empty())
+                    playerName.pop_back();
+                else if (e.text.unicode < 128 && e.text.unicode != '\b')
+                    playerName += static_cast<char>(e.text.unicode);
+
+                playerNameText.setString(playerName);
+                // draw
+            }
+            if (typing && e.type == Event::KeyPressed)
+            {
+                if (e.key.code == Keyboard::Enter)
+                {
+                    typingDone = true;
+                    cout << "Name Received: " << playerName << endl;
+                    typing = false;
+                    ofstream scoreFile("highestscore.txt", ios::out);
+                    scoreFile << (TotalLines * 10) << " " << playerName << endl;
                 }
             }
         }
@@ -215,6 +264,7 @@ int main()
                 window.draw(tiles);
             }
             window.draw(frame);
+            window.draw(ScoreOutput);
         }
         else if (gameState == Paused)
         {
@@ -227,6 +277,7 @@ int main()
             GameOver.setScale(0.2, 0.2);
             GameOver.setPosition(40, 10);
             window.draw(GameOver);
+
             ScoreOutput.setFillColor(Color::Black);
             ScoreOutput.setString("Your Score was : " + to_string(TotalLines * 10));
             ScoreOutput.setPosition(50, 200);
@@ -234,18 +285,17 @@ int main()
 
             if (checkHighscore(TotalLines))
             {
+                HighscoreOutput.setString("New HighScore!\nEnter Your Name : \n");
                 HighscoreOutput.setFillColor(Color::Black);
                 HighscoreOutput.setPosition(50, 250);
                 window.draw(HighscoreOutput);
-
-                /*
-                cout << "Congragulations!You Have Set a New Highscore!\n";
-                string name = " ";
-                cout << "Enter Your Username to Save your Score :";
-                cin >> name;
-                output << "   " << name; // writing name to file
-                */
+                if (!typingDone)
+                    typing = true;
+                window.draw(playerNameText);
             }
+            backToMenu.setPosition(80, 400);
+            backToMenu.setFillColor(Color::Black);
+            window.draw(backToMenu);
         }
 
         window.display();

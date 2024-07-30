@@ -137,9 +137,7 @@ bool gameOver(int N)
     for (int i = 0; i < N; i++)
     {
         if (gameGrid[2][i] != 0)
-        {
             return true;
-        }
     }
     return false;
 }
